@@ -1,0 +1,9 @@
+numpy
+optuna
+pandas
+lightgbm
+scikit-learn
+fastapi
+pydantic
+typing
+uvicorn

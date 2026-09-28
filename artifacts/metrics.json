@@ -1,0 +1,19 @@
+{
+    "cv_best_log_rmse": 0.12124333142418534,
+    "test_log_rmse": 0.13858732875681276,
+    "test_dollar_rmse": 28156.95238500416,
+    "hyperparameters": {
+        "n_estimators": 1500,
+        "learning_rate": 0.03251164809254581,
+        "num_leaves": 37,
+        "max_depth": 3,
+        "subsample": 0.6597814207778607,
+        "colsample_bytree": 0.42618943574040125,
+        "reg_alpha": 0.021271817903286343,
+        "reg_lambda": 0.43928281462387964,
+        "min_child_samples": 12,
+        "min_child_weight": 2.6728560163140553,
+        "objective": "regression",
+        "subsample_freq": 1
+    }
+}
