@@ -1,8 +1,7 @@
 .ipynb_checkpoints
 ipynb_checkpoints
-model
-asycnapp.py
 __pycache__
 .venv/
 .gitignore
-train_data.csv.dvc
+train_data.csv
+.dvcignore
