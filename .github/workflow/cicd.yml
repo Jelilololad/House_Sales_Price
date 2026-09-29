@@ -1,8 +1,8 @@
-name: MLOps Pipeline
+name: CICD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 env:
@@ -16,8 +16,8 @@ jobs:
   train-and-deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      packages: write
+      contents: write   # Required to commit updated k8s files back to git
+      packages: write   # Required to push images to GHCR
 
     steps:
       - name: Checkout repository code
