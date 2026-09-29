@@ -9,8 +9,8 @@ metadata:
     serving.kserve.io/s3-region: us-east-1
 type: Opaque
 stringData:
-  AWS_ACCESS_KEY_ID: AKIASNGY7Y7OK7GFHFKJ
-  AWS_SECRET_ACCESS_KEY: U7ynYRZKdSo2dO1b/qNu+t7F0yfpMvdlbYp5ZebD
+  AWS_ACCESS_KEY_ID: "YOUR_AWS_ACCESS_KEY_ID_HERE"
+  AWS_SECRET_ACCESS_KEY: "YOUR_AWS_SECRET_ACCESS_KEY_HERE"
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -18,4 +18,4 @@ metadata:
   name: sa-s3-access
   namespace: house-sale-project-predict
 secrets:
-- name: s3-secret
+  - name: s3-secret
