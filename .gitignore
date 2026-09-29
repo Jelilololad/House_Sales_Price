@@ -1,7 +1,6 @@
-.ipynb_checkpoints
-ipynb_checkpoints
-__pycache__
+__pycache__/
+*.pyc
 .venv/
-.gitignore
-train_data.csv
-.dvcignore
+venv/
+artifacts/*.pkl
+!artifacts/.gitkeep

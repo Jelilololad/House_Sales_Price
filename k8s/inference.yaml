@@ -1,0 +1,13 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: house-price-predictor
+  namespace: house-sale-project-predict
+spec:
+  predictor:
+    model:
+      runtime: lightgbm-sklearn-runtime
+      modelFormat:
+        name: lightgbm-sklearn
+      storageUri: "s3://houseprice-s3-bucket/model.pkl/"
+    serviceAccountName: sa-s3-access

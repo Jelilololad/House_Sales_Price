@@ -1,0 +1,84 @@
+name: MLOps Pipeline
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  S3_BUCKET: houseprice-s3-bucket
+  MODEL_NAME: model.pkl
+  MODEL_PATH: artifacts/model.pkl
+  IMAGE_NAME: ghcr.io/jelilololad/kserve-sklearn-lightgbm:latest
+
+jobs:
+  train-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run Data Wrangler
+        run: python src/wrangler.py
+
+      - name: Train model
+        run: python src/train_model.py
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Upload model artifact to S3
+        run: |
+          aws s3 cp ${{ env.MODEL_PATH }} s3://${{ env.S3_BUCKET }}/${{ env.MODEL_NAME }}
+          echo "Model successfully pushed to S3."
+
+      - name: Log in to GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push KServe custom container image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ env.IMAGE_NAME }}
+
+      - name: Update inference.yaml with S3 storageUri
+        run: |
+          MODEL_URI="s3://${{ env.S3_BUCKET }}/${{ env.MODEL_NAME }}"
+          sed -i "s|storageUri: .*|storageUri: \"$MODEL_URI\"|g" k8s/inference.yaml
+
+      - name: Commit and push updated inference.yaml
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add k8s/inference.yaml
+          git status
+          git diff-index --quiet HEAD || git commit -m "chore(k8s): update model storageUri [skip ci]"
+          git push

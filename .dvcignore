@@ -1,6 +1,3 @@
 .venv/
 .ipynb_checkpoints
 ipynb_checkpoints
-model
-.gitignore
-Dockerfile
